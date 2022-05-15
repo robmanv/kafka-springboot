@@ -5,7 +5,6 @@ import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.GenericRecord;
 import org.springframework.stereotype.Service;
-
 import java.io.File;
 import java.io.IOException;
 

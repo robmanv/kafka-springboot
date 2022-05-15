@@ -10,11 +10,9 @@ import java.util.Properties;
 
 @Configuration
 public class KafkaProducerConfig {
-    // kafka broker list.
     @Value("${spring.kafka.producer.bootstrap-servers}")
     private String brokersUrl;
 
-    // schema registry url.
     @Value("${spring.kafka.schema.registry.url}")
     private String registry;
 
@@ -26,6 +24,15 @@ public class KafkaProducerConfig {
 
     @org.springframework.context.annotation.Bean
     public KafkaProducer<String, GenericRecord> kafkaProducer() {
+        Properties producerProps = new Properties();
+        producerProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, brokersUrl);
+        producerProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, keySerializer);
+        producerProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, valueSerializer);
+        producerProps.put("schema.registry.url", registry);
+
+        return new KafkaProducer(producerProps);
+    }
+}
 
 //        Properties properties = new Properties();
 //
@@ -38,12 +45,3 @@ public class KafkaProducerConfig {
 
 //        return new KafkaProducer<String, Cliente>(properties);
 
-        Properties producerProps = new Properties();
-        producerProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, brokersUrl);
-        producerProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, keySerializer);
-        producerProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, valueSerializer);
-        producerProps.put("schema.registry.url", registry);
-
-        return new KafkaProducer(producerProps);
-    }
-}
