@@ -5,6 +5,7 @@ import br.com.kafka.core.ports.ConsumerKafkaPort;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -22,6 +23,12 @@ public class ConsumerKafka implements ConsumerKafkaPort {
     @Autowired
     ConcurrentKafkaListenerContainerFactory kafkaListenerContainerFactory;
 
+    @Autowired
+    private ModelMapper modelMapper;
+
+    @Autowired
+    private Cliente cliente;
+
     @KafkaListener(topics = "${topic.name.consumer}",
             groupId = "${spring.kafka.consumer.group-id}",
             containerFactory = "kafkaListenerContainerFactory")
@@ -34,5 +41,9 @@ public class ConsumerKafka implements ConsumerKafkaPort {
         log.info("Headers: {}", payload.headers());
         log.info("Partion: {}", payload.partition());
         log.info("Order: {}", payload.value());
+
+        cliente = modelMapper.map(payload.value(), Cliente.class);
+
+        log.info("CONSUMER: {}", cliente);
     }
 }

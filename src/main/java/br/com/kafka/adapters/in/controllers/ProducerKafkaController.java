@@ -29,7 +29,8 @@ public class ProducerKafkaController {
 
     @GetMapping(value = "/send")
     public void send(){
-        producerKafkaPort.send(cliente.toString());
+        cliente = new Cliente(1, "Robson Vellasques", 40, 1.81, 105.0, 1234.0, "Rua Vergueiro");
+        producerKafkaPort.send(cliente);
         System.out.println("Registro produzido: " + cliente.toString());
     }
 

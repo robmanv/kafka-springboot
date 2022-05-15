@@ -2,9 +2,11 @@ package br.com.kafka.core.entities;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class Cliente {
     private Integer id;   //id
     private String name; //nome
