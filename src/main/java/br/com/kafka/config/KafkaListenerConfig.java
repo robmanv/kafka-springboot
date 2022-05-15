@@ -2,9 +2,7 @@ package br.com.kafka.config;
 
 import br.com.kafka.core.entities.Cliente;
 import io.confluent.kafka.serializers.KafkaAvroDeserializer;
-import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.LongDeserializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -19,7 +17,7 @@ import java.util.Map;
 
 @EnableKafka
 @Configuration
-public class KafkaConsumerConfig {
+public class KafkaListenerConfig {
 
     // kafka broker list.
     @Value("${spring.kafka.producer.bootstrap-servers}")
@@ -35,8 +33,8 @@ public class KafkaConsumerConfig {
     @Value("${spring.kafka.consumer.value-deserializer}")
     private String valueDeserializer;
 
-    @Bean
-    public KafkaConsumer<Long, Cliente> consumer() {
+    @org.springframework.context.annotation.Bean
+    public ConsumerFactory<Long, Cliente> consumerFactory() {
         Map<String, Object> props = new HashMap<>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
         props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
@@ -45,6 +43,16 @@ public class KafkaConsumerConfig {
         props.put("schema.registry.url", schemaRegistryAddress);
         props.put("specific.avro.reader", true);
 
-        return new KafkaConsumer<Long, Cliente>(props);
+        return new DefaultKafkaConsumerFactory(props, new LongDeserializer(), new KafkaAvroDeserializer());
+    }
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<Long, Cliente>
+    kafkaListenerContainerFactory() {
+
+        ConcurrentKafkaListenerContainerFactory<Long, Cliente> factory =
+                new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(consumerFactory());
+        return factory;
     }
 }

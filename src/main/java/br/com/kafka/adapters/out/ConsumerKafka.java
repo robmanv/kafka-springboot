@@ -5,45 +5,49 @@ import br.com.kafka.core.ports.ConsumerKafkaPort;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.stereotype.Service;
+import java.time.Duration;
+import java.util.Collections;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class ConsumerKafka implements ConsumerKafkaPort {
 
-    @Value("${topic.name.consumer}")
+    @Value("${topic.name.producer}")
     private String topicName;
 
     @Autowired
-    ConcurrentKafkaListenerContainerFactory kafkaListenerContainerFactory;
+    KafkaConsumer kafkaConsumer;
 
     @Autowired
-    private ModelMapper modelMapper;
+    Cliente cliente;
 
     @Autowired
-    private Cliente cliente;
+    ModelMapper modelMapper;
 
-    @KafkaListener(topics = "${topic.name.consumer}",
-            groupId = "${spring.kafka.consumer.group-id}",
-            containerFactory = "kafkaListenerContainerFactory")
-//            properties = {"schema.registry.url=localhost:8081",
-//                        "value.deserializer=io.confluent.kafka.serializers.KafkaAvroDeserializer",
-//                        "key.deserializer=org.apache.kafka.common.serialization.LongDeserializer"})
-    public void consume(ConsumerRecord<String, Cliente> payload) {
-        log.info("Tópico: {}", topicName);
-        log.info("key: {}", payload.key());
-        log.info("Headers: {}", payload.headers());
-        log.info("Partion: {}", payload.partition());
-        log.info("Order: {}", payload.value());
+    public Cliente consume() {
+        try {
+            kafkaConsumer.subscribe(Collections.singletonList(topicName));
 
-        cliente = modelMapper.map(payload.value(), Cliente.class);
+            ConsumerRecords<Long, Cliente> records = kafkaConsumer.poll(Duration.ofMillis(100));
 
-        log.info("CONSUMER: {}", cliente);
+            for (ConsumerRecord<Long, Cliente> record : records) {
+                System.out.println("Received message: (" + record.key() + ", " + record.value() + ") at offset " + record.offset());
+                cliente = modelMapper.map(record.value(), Cliente.class);
+
+                return cliente;
+            }
+
+            return null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

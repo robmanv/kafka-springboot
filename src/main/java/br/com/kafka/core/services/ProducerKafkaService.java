@@ -16,7 +16,6 @@ public class ProducerKafkaService {
         //Instantiating the Schema.Parser class.
         Schema schema = new Schema.Parser().parse(new File("/Users/robsvel/projetos/kafka-springboot/src/main/resources/avro/emp.avsc"));
 
-
         //Instantiating the GenericRecord class.
         GenericRecord record = new GenericData.Record(schema);
 
