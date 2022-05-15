@@ -11,4 +11,6 @@ public class Cliente {
     private Integer age; //idade
     private Double height; //altura
     private Double weight; //peso
+    private Double salary; //salario
+    private String address; // endereço
 }

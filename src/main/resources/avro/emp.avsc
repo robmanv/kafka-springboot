@@ -1,0 +1,14 @@
+{
+   "namespace" : "ClienteNamespace",
+   "type" : "record",
+   "name" : "Cliente",
+   "fields" : [
+      { "name" : "id" , "type" : "int" },
+      { "name" : "name" , "type" : "string" },
+      { "name" : "age" , "type" : "int" },
+      { "name" : "height" , "type" : "double" },
+      { "name" : "weight" , "type" : "double" },
+      { "name" : "salary" , "type" : "double" },
+      { "name" : "address" , "type" : "string" }
+   ]
+}

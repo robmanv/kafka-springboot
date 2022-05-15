@@ -19,6 +19,6 @@ public class CommandLine implements CommandLineRunner {
     public void run(String... args) throws Exception {
         System.out.println("Robson");
         System.out.println(cliente.toString());
-        producerKafkaPort.send(cliente.toString());
+//        producerKafkaPort.send(cliente.toString());
     }
 }

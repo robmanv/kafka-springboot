@@ -6,9 +6,13 @@ import br.com.kafka.core.ports.ProducerKafkaPort;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpServerErrorException;
+
+import java.rmi.ServerException;
 
 @RequiredArgsConstructor
 @RestController
@@ -27,6 +31,16 @@ public class ProducerKafkaController {
     public void send(){
         producerKafkaPort.send(cliente.toString());
         System.out.println("Registro produzido: " + cliente.toString());
+    }
+
+    @PostMapping(value = "/send")
+    public ResponseEntity<Cliente> create(@RequestBody Cliente newCliente) {
+        Cliente cliente = producerKafkaPort.send(newCliente);
+        if (cliente == null) {
+            throw new HttpServerErrorException(HttpStatus.BAD_REQUEST);
+        } else {
+            return new ResponseEntity<>(cliente, HttpStatus.CREATED);
+        }
     }
 
 }
