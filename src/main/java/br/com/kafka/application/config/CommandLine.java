@@ -1,10 +1,11 @@
-package br.com.kafka.config;
+package br.com.kafka.application.config;
 
 import br.com.kafka.core.entities.Cliente;
-import br.com.kafka.core.ports.ProducerKafkaPort;
+import br.com.kafka.core.ports.ListenerKafkaPort;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 
 @Configuration
 public class CommandLine implements CommandLineRunner {
@@ -13,7 +14,7 @@ public class CommandLine implements CommandLineRunner {
     Cliente cliente;
 
     @Autowired
-    ProducerKafkaPort producerKafkaPort;
+    ListenerKafkaPort listenerKafkaPort;
 
     @Override
     public void run(String... args) throws Exception {

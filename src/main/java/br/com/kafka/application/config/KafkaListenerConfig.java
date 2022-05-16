@@ -1,4 +1,4 @@
-package br.com.kafka.config;
+package br.com.kafka.application.config;
 
 import br.com.kafka.core.entities.Cliente;
 import io.confluent.kafka.serializers.KafkaAvroDeserializer;

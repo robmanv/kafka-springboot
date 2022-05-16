@@ -1,4 +1,4 @@
-package br.com.kafka.config;
+package br.com.kafka.application.config;
 
 import org.apache.avro.generic.GenericRecord;
 import org.apache.kafka.clients.producer.KafkaProducer;

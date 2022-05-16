@@ -52,5 +52,4 @@ public class ProducerKafkaController {
         return new ResponseEntity<>(cliente, HttpStatus.ACCEPTED);
     }
 
-
 }

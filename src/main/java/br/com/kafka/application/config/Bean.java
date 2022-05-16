@@ -1,5 +1,6 @@
-package br.com.kafka.config;
+package br.com.kafka.application.config;
 
+import br.com.kafka.adapters.out.ListenerKafka;
 import br.com.kafka.core.entities.Cliente;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Configuration;
