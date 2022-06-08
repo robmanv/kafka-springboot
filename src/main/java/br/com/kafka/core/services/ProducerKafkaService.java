@@ -13,7 +13,7 @@ public class ProducerKafkaService {
 
     public GenericRecord gerarSchema(Cliente cliente) throws IOException {
         //Instantiating the Schema.Parser class.
-        Schema schema = new Schema.Parser().parse(new File("/Users/robsvel/projetos/kafka-springboot/src/main/resources/avro/emp.avsc"));
+        Schema schema = new Schema.Parser().parse(new File("D:\\Aplicativos\\Programação\\Projetos\\kafka-springboot\\src\\main\\resources\\avro\\emp.avsc"));
 
         //Instantiating the GenericRecord class.
         GenericRecord record = new GenericData.Record(schema);
