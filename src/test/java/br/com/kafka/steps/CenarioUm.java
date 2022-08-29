@@ -4,11 +4,14 @@ import br.com.kafka.adapters.clients.JSONPlaceHolderClient;
 import br.com.kafka.config.Config;
 import br.com.kafka.core.entities.Post;
 import br.com.kafka.helpers.ApiMocks;
+import br.com.kafka.helpers.HelpersObjects;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import io.cucumber.java.pt.Dado;
 import io.cucumber.java.pt.Entao;
 import io.cucumber.java.pt.Quando;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +40,9 @@ public class CenarioUm {
     @Autowired
     JSONPlaceHolderClient jsonPlaceHolderClient;
 
+    @Autowired
+    ObjectMapper mapper;
+
     String postagemJson;
 
     @Dado("um cenario de chamada api JSONPlaceHolderClient")
@@ -49,15 +55,13 @@ public class CenarioUm {
     public void obterUmaListaDeMensagens() throws IOException {
         List<Post> postagem = jsonPlaceHolderClient.getPosts();
 
-        ObjectMapper mapper = new ObjectMapper();
-
         this.postagemJson = mapper.writeValueAsString(postagem.get(0));
     }
 
     @Entao("finalizamos a chamada da api JSONPlaceHolderClient")
-    public void finalizamosAChamadaDaApiJSONPlaceHolderClient() {
+    public void finalizamosAChamadaDaApiJSONPlaceHolderClient() throws JsonProcessingException {
 
-        assert this.postagemJson == this.postagemJson;
+        Assertions.assertEquals(this.postagemJson, mapper.writeValueAsString(HelpersObjects.getUsuarioUm()));
         wireMockServer.stop();
     }
 

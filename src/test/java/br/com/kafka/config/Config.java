@@ -34,6 +34,12 @@ import static org.springframework.util.StreamUtils.copyToString;
 @CucumberContextConfiguration
 @ContextConfiguration( classes = Config.class )
 public class Config {
+    @Bean
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper();
+    }
+
+
     @RegisterExtension
     static WireMockExtension INVENTORY_SERVICE = WireMockExtension.newInstance()
             .options(wireMockConfig().port(8089))
@@ -49,20 +55,17 @@ public class Config {
             @Override
             public List<Post> getPosts() {
                 ObjectMapper objectMapper = new ObjectMapper();
-                Object objs = null;
+                File file = new File("src/test/resources/payload/get-json-placeholder-client-response.json");
+                List<Post> lista = new ArrayList<>();
+
                 try {
-                    objs = objectMapper.readValue(new File("src/test/resources/payload/get-json-placeholder-client-response.json"), Object.class);
+                    lista = objectMapper.readValue(file, new TypeReference<List<Post>>() {});
+
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
 
-                List<Post> listaPost = new ArrayList<>();
-
-                for (Object obj : (List) objs) {
-                    listaPost.add(objectMapper.convertValue(obj, Post.class));
-                }
-
-                return listaPost;
+                return lista;
             }
 
             @Override
