@@ -5,6 +5,8 @@ import br.com.kafka.adapters.exception.CustomErrorDecoder;
 import br.com.kafka.adapters.out.ListenerKafka;
 import br.com.kafka.core.entities.Cliente;
 import br.com.kafka.core.entities.Post;
+import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import feign.RequestInterceptor;
 import feign.codec.ErrorDecoder;
 import feign.okhttp.OkHttpClient;
@@ -46,6 +48,12 @@ public class Bean {
             requestTemplate.header("password", "password");
             requestTemplate.header("Accept", ContentType.APPLICATION_JSON.getMimeType());
         };
+    }
+
+    @org.springframework.context.annotation.Bean
+    public AWSCredentialsProvider awsCredentialsProvider() {
+
+        return new DefaultAWSCredentialsProviderChain();
     }
 
 }

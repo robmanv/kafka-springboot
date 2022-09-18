@@ -4,6 +4,12 @@ import br.com.kafka.adapters.clients.JSONPlaceHolderClient;
 import br.com.kafka.core.entities.Cliente;
 import br.com.kafka.core.entities.Post;
 import br.com.kafka.core.ports.ListenerKafkaPort;
+import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.regions.Region;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.secretsmanager.AWSSecretsManager;
+import com.amazonaws.services.secretsmanager.AWSSecretsManagerClient;
+import com.amazonaws.services.secretsmanager.model.GetSecretValueRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -27,6 +33,8 @@ public class CommandLine implements CommandLineRunner {
     @Autowired
     JSONPlaceHolderClient jsonPlaceHolderClient;
 
+    @Autowired
+    AWSCredentialsProvider awsCredentialsProvider;
     @Override
     public void run(String... args) throws Exception {
         System.out.println("Robson");
@@ -44,5 +52,15 @@ public class CommandLine implements CommandLineRunner {
         System.out.println("POSTS DA API - TOSTRING: " + postagem.get(0).toString());
 
 //        producerKafkaPort.send(cliente.toString());
+
+        Region region = Region.getRegion(Regions.SA_EAST_1);
+        AWSSecretsManager secretsClient = AWSSecretsManagerClient.builder()
+                .withRegion(String.valueOf(region))
+                .withCredentials(awsCredentialsProvider)
+                .build();
+
+        String secretValue = secretsClient.getSecretValue(new GetSecretValueRequest().withSecretId("redis-elasticache-secret")).getSecretString();
+        System.out.println("Valor secreto e':" + secretValue);
+
     }
 }
