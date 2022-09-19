@@ -7,6 +7,10 @@ import br.com.kafka.core.entities.Cliente;
 import br.com.kafka.core.entities.Post;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
+import com.amazonaws.regions.Region;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.secretsmanager.AWSSecretsManager;
+import com.amazonaws.services.secretsmanager.AWSSecretsManagerClient;
 import feign.RequestInterceptor;
 import feign.codec.ErrorDecoder;
 import feign.okhttp.OkHttpClient;
@@ -52,8 +56,16 @@ public class Bean {
 
     @org.springframework.context.annotation.Bean
     public AWSCredentialsProvider awsCredentialsProvider() {
-
         return new DefaultAWSCredentialsProviderChain();
+    }
+
+    @org.springframework.context.annotation.Bean
+    public AWSSecretsManager awsSecretsManager() {
+        Region region = Region.getRegion(Regions.SA_EAST_1);
+        return AWSSecretsManagerClient.builder()
+                .withRegion(String.valueOf(region))
+                .withCredentials(awsCredentialsProvider())
+                .build();
     }
 
 }
