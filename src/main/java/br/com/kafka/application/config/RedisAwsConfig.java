@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import redis.clients.jedis.*;
+import redis.clients.jedis.Jedis;
 
 @Configuration
 public class RedisAwsConfig {
@@ -40,9 +40,8 @@ public class RedisAwsConfig {
 
     @Bean
     @Profile("local")
-    public Jedis jedisLocal() {
-
-        Jedis jedis = new Jedis("localhost", redisAwsPort);
+    public Jedis jedisLocal() throws Exception {
+        Jedis jedis = new Jedis("localhost", 9999, true);
 
         String secretValue = awsSecretsManager.getSecretValue(new GetSecretValueRequest().withSecretId("redis-elasticache-secret")).getSecretString();
         JSONObject jsonObject = new JSONObject(secretValue);
