@@ -60,12 +60,12 @@ public class CommandLine implements CommandLineRunner {
 
 //        producerKafkaPort.send(cliente.toString());
 
-        String secretValue = awsSecretsManager.getSecretValue(new GetSecretValueRequest().withSecretId("redis-elasticache-secret")).getSecretString();
-        JSONObject jsonObject = new JSONObject(secretValue);
-        System.out.println("Valor secreto e':" + jsonObject.getString("password"));
-
-        redisPort.upsertCacheEntry("password", jsonObject.getString("password"), true);
-        System.out.println("Redis AWS Secret Armazenado: " + redisPort.getCacheValue("password"));
+//        String secretValue = awsSecretsManager.getSecretValue(new GetSecretValueRequest().withSecretId("redis-elasticache-secret")).getSecretString();
+//        JSONObject jsonObject = new JSONObject(secretValue);
+//        System.out.println("Valor secreto e':" + jsonObject.getString("password"));
+//
+//        redisPort.upsertCacheEntry("password", jsonObject.getString("password"), true);
+//        System.out.println("Redis AWS Secret Armazenado: " + redisPort.getCacheValue("password"));
 
     }
 }

@@ -11,6 +11,7 @@ public class RedisConfig {
     @Value("${redis.server}")
     private String redisServer;
 
+    @Bean
     public Jedis redisFactory() {
         return new Jedis(redisServer);
     }

@@ -17,6 +17,7 @@ import feign.okhttp.OkHttpClient;
 import org.apache.http.entity.ContentType;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.kafka.listener.LoggingErrorHandler;
 
 import java.util.List;
 
@@ -66,6 +67,11 @@ public class Bean {
                 .withRegion(String.valueOf(region))
                 .withCredentials(awsCredentialsProvider())
                 .build();
+    }
+
+    @org.springframework.context.annotation.Bean
+    public LoggingErrorHandler errorHandler() {
+        return new LoggingErrorHandler();
     }
 
 }

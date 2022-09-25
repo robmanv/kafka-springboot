@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import redis.clients.jedis.Jedis;
 
-@Configuration
+//@Configuration
 public class RedisAwsConfig {
 
     @Value("${redis.aws.server}")
