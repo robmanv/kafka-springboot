@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.stereotype.Service;
+import redis.clients.jedis.Jedis;
 
 @Slf4j
 @Service
@@ -29,6 +30,9 @@ public class ListenerKafka implements ListenerKafkaPort {
     @Autowired
     private Cliente cliente;
 
+    @Autowired
+    private Jedis jedisFactory;
+
     @KafkaListener(topics = "${topic.name.consumer}",
             groupId = "${spring.kafka.consumer.group-id}",
             containerFactory = "kafkaListenerContainerFactory")
@@ -43,6 +47,11 @@ public class ListenerKafka implements ListenerKafkaPort {
         log.info("Order: {}", payload.value());
 
         cliente = modelMapper.map(payload.value(), Cliente.class);
+
+        jedisFactory.set("chave1", cliente.toString());
+        String value = jedisFactory.get("chave1");
+
+        log.info("REDIS (CHAVE1) - GET --> {}", value);
 
         log.info("CONSUMER: {}", cliente);
     }

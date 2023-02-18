@@ -28,15 +28,18 @@ logging:
                     adapters:
                         clients:
                             JSONPlaceHolderClient: DEBUG
-
-
-
-
 management:
     endpoints:
         web:
             exposure:
                 include: health,info,prometheus
+redis:
+    aws:
+        cache-expiracy: 3600
+        port: 6379
+        server: master.tf-rep-group-1.bjabsj.sae1.cache.amazonaws.com
+        timeout: 2000
+    server: redis://default:redispw@localhost:49153
 schema:
     registry:
         url: http://localhost:8081
@@ -45,10 +48,10 @@ server:
 some:
     prop: 'max.poll.records: 10'
 spring:
-#           (ESSE PARAMETRO É PRA NÃO INICIAR O SPRING BATCH AUTOMATICAMENTE)
-#    batch:
-#        job:
-#            enabled: false
+    #           (ESSE PARAMETRO É PRA NÃO INICIAR O SPRING BATCH AUTOMATICAMENTE)
+    #    batch:
+    #        job:
+    #            enabled: false
     kafka:
         consumer:
             auto-offset-reset: earliest
@@ -67,6 +70,8 @@ spring:
         schema:
             registry:
                 url: http://localhost:8081
+    profiles:
+        active: local
 topic:
     name:
         consumer: topico.avro.clientes
