@@ -38,10 +38,8 @@
     <orderEntry type="library" name="Maven: jakarta.xml.ws:jakarta.xml.ws-api:2.3.3" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: jakarta.jws:jakarta.jws-api:2.1.0" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-oxm:5.3.19" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework:spring-beans:5.3.19" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.ws:spring-ws-core:3.1.3" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.ws:spring-xml:3.1.3" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework:spring-aop:5.3.19" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.session:spring-session-core:2.6.3" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-jcl:5.3.19" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.springframework.boot:spring-boot-devtools:2.6.7" level="project" />
@@ -156,5 +154,10 @@
     <orderEntry type="library" name="Maven: ch.qos.logback:logback-core:1.2.3" level="project" />
     <orderEntry type="library" name="Maven: org.apache.logging.log4j:log4j-core:2.12.1" level="project" />
     <orderEntry type="library" name="Maven: org.apache.logging.log4j:log4j-api:2.17.2" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.batch:spring-batch-core:4.3.7" level="project" />
+    <orderEntry type="library" name="Maven: javax.batch:javax.batch-api:1.0" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.batch:spring-batch-infrastructure:4.3.5" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-aop:5.3.19" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-beans:5.3.19" level="project" />
   </component>
 </module>

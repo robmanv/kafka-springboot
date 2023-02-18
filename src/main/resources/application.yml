@@ -1,0 +1,73 @@
+auto:
+    create:
+        topics:
+            enable: true
+feign:
+    client:
+        config:
+            default:
+                connectTimeout: 5000
+                loggerLevel: basic
+                readTimeout: 5000
+fetch:
+    min:
+        bytes: 123456
+kafka:
+    consumer:
+        custom:
+            properties:
+                key:
+                    deserializer: org.apache.kafka.common.serialization.IntegerDeserializer
+                value:
+                    deserializer: org.apache.kafka.common.serialization.StringDeserializer
+logging:
+    level:
+        br:
+            com:
+                kafka:
+                    adapters:
+                        clients:
+                            JSONPlaceHolderClient: DEBUG
+
+
+
+
+management:
+    endpoints:
+        web:
+            exposure:
+                include: health,info,prometheus
+schema:
+    registry:
+        url: http://localhost:8081
+server:
+    port: 8090
+some:
+    prop: 'max.poll.records: 10'
+spring:
+#           (ESSE PARAMETRO É PRA NÃO INICIAR O SPRING BATCH AUTOMATICAMENTE)
+#    batch:
+#        job:
+#            enabled: false
+    kafka:
+        consumer:
+            auto-offset-reset: earliest
+            bootstrap-servers: http://localhost:9092
+            group-id: group_id
+            key-deserializer: org.apache.kafka.common.serialization.LongDeserializer
+            schema:
+                registry:
+                    url: http://localhost:8081
+            value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+        producer:
+            bootstrap-servers: http://localhost:9092
+            group-id: group_id
+            key-serializer: org.apache.kafka.common.serialization.LongSerializer
+            value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+        schema:
+            registry:
+                url: http://localhost:8081
+topic:
+    name:
+        consumer: topico.avro.clientes
+        producer: topico.avro.clientes
