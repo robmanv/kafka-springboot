@@ -17,7 +17,9 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.File;
 import java.io.FileReader;
@@ -53,7 +55,7 @@ public class Config {
     public JSONPlaceHolderClient jsonPlaceHolderClient() {
         return new JSONPlaceHolderClient() {
             @Override
-            public List<Post> getPosts() {
+            public ResponseEntity<List<Post>> getPosts() {
                 ObjectMapper objectMapper = new ObjectMapper();
                 File file = new File("src/test/resources/payload/get-json-placeholder-client-response.json");
                 List<Post> lista = new ArrayList<>();
@@ -65,7 +67,7 @@ public class Config {
                     e.printStackTrace();
                 }
 
-                return lista;
+                return ResponseEntity.ok().body(lista);
             }
 
             @Override

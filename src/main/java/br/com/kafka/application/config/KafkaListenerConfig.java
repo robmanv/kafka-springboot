@@ -71,7 +71,6 @@ public class KafkaListenerConfig {
         ConcurrentKafkaListenerContainerFactory<Long, Cliente> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
-
         factory.setRetryTemplate(retryTemplate());
         factory.setRecoveryCallback((context -> {
             if(context.getLastThrowable().getCause() instanceof RecoverableDataAccessException){

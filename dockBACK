@@ -1,0 +1,48 @@
+# FROM amazoncorretto:11
+FROM alpine:latest
+
+MAINTAINER Robson Vellasques, https://github.com/robmanv
+
+# LABEL about the custom image
+LABEL maintainer="robmanv@gmail.com"
+LABEL version="1.0"
+LABEL description="Sringboot application with kafka for training."
+
+# # Disable Prompt During Packages Installation
+# ARG DEBIAN_FRONTEND=noninteractive
+
+# RUN yum install -q -y update && \
+#     yum install -q -y upgrade && \
+#     yum install -q -y install ssh
+# RUN yum -y install python3 \
+#     python3-pip \
+#     shadow-utils
+
+# RUN groupadd -r spring
+# RUN useradd -g spring -p 123 spring
+
+ARG JAR_FILE=target/*.jar
+RUN mkdir /app
+COPY ./target/kafka-springboot.jar /app/app.jar
+WORKDIR /app
+
+#liberar rw na pasta app pra todos os usuarios
+RUN chmod 777 /app
+
+RUN pwd
+RUN ls
+RUN echo "output"
+
+
+
+ENTRYPOINT ["java", "-jar", "-Xms256m -Xmx512m -noverify -XX:TieredStopAtLevel=1 -Duser.timezone=America/Sao_Paulo -Duser.language=pt -Duser.region=BR -Duser.country=BR -Dspring.jmx.enabled=true -Dspring.profiles.active=$SPRING_PROFILE app.jar"]
+# Update Ubuntu Software repository
+# RUN apk --update add git less openssh && \
+#     rm -rf /var/lib/apt/lists/* && \
+#     rm /var/cache/apk/*
+#
+# RUN systemctl start docker
+# RUN systemctl enable docker
+
+# ADD ./target/*.jar /app/app.jar
+# CMD ["java","-jar","/app/app.jar"]

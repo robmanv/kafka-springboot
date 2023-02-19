@@ -11,6 +11,9 @@ import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.secretsmanager.AWSSecretsManager;
 import com.amazonaws.services.secretsmanager.AWSSecretsManagerClient;
+import com.amazonaws.services.sqs.AmazonSQS;
+import com.amazonaws.services.sqs.AmazonSQSClient;
+import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
 import feign.RequestInterceptor;
 import feign.codec.ErrorDecoder;
 import feign.okhttp.OkHttpClient;
@@ -72,6 +75,11 @@ public class Bean {
     @org.springframework.context.annotation.Bean
     public LoggingErrorHandler errorHandler() {
         return new LoggingErrorHandler();
+    }
+
+    @org.springframework.context.annotation.Bean
+    public AmazonSQS amazonSQS() {
+        return AmazonSQSClientBuilder.defaultClient();
     }
 
 }

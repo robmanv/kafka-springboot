@@ -50,13 +50,13 @@ public class CommandLine implements CommandLineRunner {
 
         ObjectMapper mapper = new ObjectMapper();
 
-        List<Post> postagem = jsonPlaceHolderClient.getPosts();
+        ResponseEntity<List<Post>> postagem = jsonPlaceHolderClient.getPosts();
 
-        String postagemJson = mapper.writeValueAsString(postagem.get(0));
+        String postagemJson = mapper.writeValueAsString(postagem);
 
         System.out.println("RESPONSE-ENTITY        :" + ResponseEntity.ok().body(postagemJson));
         System.out.println("POSTS DA API - JSON    : " + postagemJson);
-        System.out.println("POSTS DA API - TOSTRING: " + postagem.get(0).toString());
+        System.out.println("POSTS DA API - TOSTRING: " + postagem.getBody().get(0).toString());
 
 //        producerKafkaPort.send(cliente.toString());
 

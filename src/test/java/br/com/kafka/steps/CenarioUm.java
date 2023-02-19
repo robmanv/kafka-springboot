@@ -17,6 +17,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.context.ApplicationContext;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -56,9 +57,9 @@ public class CenarioUm {
 
     @Quando("obter uma lista de mensagens")
     public void obterUmaListaDeMensagens() throws IOException {
-        List<Post> postagem = jsonPlaceHolderClient.getPosts();
+        ResponseEntity<List<Post>> postagem = jsonPlaceHolderClient.getPosts();
 
-        this.postagemJson = mapper.writeValueAsString(postagem.get(0));
+        this.postagemJson = mapper.writeValueAsString(postagem.getBody().get(0));
     }
 
     @Entao("finalizamos a chamada da api JSONPlaceHolderClient")

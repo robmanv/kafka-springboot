@@ -13,6 +13,6 @@ public class RedisConfig {
 
     @Bean
     public Jedis redisFactory() {
-        return new Jedis(redisServer);
+        return new Jedis("127.0.0.1", 6379);
     }
 }
