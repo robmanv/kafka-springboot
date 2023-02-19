@@ -11,7 +11,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="kafka-springboot" target="1.8" />
+      <module name="kafka-springboot" target="17" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
