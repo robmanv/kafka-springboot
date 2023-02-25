@@ -19,6 +19,7 @@ import feign.codec.ErrorDecoder;
 import feign.okhttp.OkHttpClient;
 import org.apache.http.entity.ContentType;
 import org.modelmapper.ModelMapper;
+import org.springframework.batch.item.ExecutionContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.listener.LoggingErrorHandler;
 
@@ -80,6 +81,11 @@ public class Bean {
     @org.springframework.context.annotation.Bean
     public AmazonSQS amazonSQS() {
         return AmazonSQSClientBuilder.defaultClient();
+    }
+
+    @org.springframework.context.annotation.Bean
+    public ExecutionContext executionContext() {
+        return new ExecutionContext();
     }
 
 }

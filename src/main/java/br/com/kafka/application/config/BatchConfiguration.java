@@ -1,8 +1,6 @@
 package br.com.kafka.application.config;
 
-import br.com.kafka.adapters.out.CustomFlatFileItemReader;
-import br.com.kafka.adapters.out.CustomFlatFileItemWriter;
-import br.com.kafka.adapters.out.ExcelFlatFileItemReader;
+import br.com.kafka.adapters.out.*;
 import br.com.kafka.core.entities.Cliente;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.configuration.JobRegistry;
@@ -21,6 +19,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
 
 import javax.annotation.PostConstruct;
 
@@ -60,6 +59,18 @@ public class BatchConfiguration {
     }
 
     @org.springframework.context.annotation.Bean
+    public CustomItemProcessorListener customItemProcessorListener() {
+
+        return new CustomItemProcessorListener();
+    }
+
+    @org.springframework.context.annotation.Bean
+    public CustomItemProcessor customItemProcessor() {
+
+        return new CustomItemProcessor();
+    }
+
+    @org.springframework.context.annotation.Bean
     public ExcelFlatFileItemReader excelFlatFileReader() {
         ExcelFlatFileItemReader excelFlatFileItemReader = new ExcelFlatFileItemReader();
 
@@ -79,10 +90,13 @@ public class BatchConfiguration {
     @org.springframework.context.annotation.Bean
     public Step myStep() {
         return stepBuilderFactory.get("myStep")
-                .<Cliente, Cliente>chunk(10)
+                .<Cliente, Cliente>chunk(50)
 //                .reader(myFlatFileReader())
                 .reader(excelFlatFileReader())
+                .processor(customItemProcessor())
                 .writer(myObjectWriter())
+                .listener(customItemProcessorListener())
+                .taskExecutor(new SimpleAsyncTaskExecutor())
                 .build();
     }
 
