@@ -268,7 +268,5 @@
     <orderEntry type="library" name="Maven: software.amazon.awssdk:dynamodb:2.20.15" level="project" />
     <orderEntry type="library" name="Maven: software.amazon.awssdk:aws-json-protocol:2.20.15" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: software.amazon.awssdk:apache-client:2.20.15" level="project" />
-    <orderEntry type="library" name="Maven: net.java.dev.jna:jna:5.9.0" level="project" />
-    <orderEntry type="library" name="Maven: net.java.dev.jna:jna-platform:5.9.0" level="project" />
   </component>
 </module>

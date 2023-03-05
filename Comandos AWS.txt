@@ -1,0 +1,14 @@
+aws --endpoint-url http://localhost:4566 --profile localstack dynamodb list-tables
+
+aws --region sa-east-1 --endpoint-url http://localhost:4566 --profile localstack dynamodb list-tables
+
+aws --endpoint-url=http://localhost:4566 dynamodb create-table --cli-input-json file://tabela.json
+
+aws --endpoint-url=http://localhost:4566 dynamodb delete-table --table-name NomeDaTabela
+
+
+aws --region sa-east-1 --endpoint-url http://localhost:4566 --profile localstack dynamodb scan --table-name tbb001_clientes --limit 1000
+
+aws --region sa-east-1 --endpoint-url http://localhost:4566 --profile localstack dynamodb query --table-name tbb001_clientes --key-condition-expression "id = :id" --expression-attribute-values '{ ":id": {"S": "1"} }'
+
+aws --region sa-east-1 --endpoint-url http://localhost:4566 --profile localstack dynamodb query --table-name tbb001_clientes --key-condition-expression "id = :id" --expression-attribute-values file://expression-attributes.json
