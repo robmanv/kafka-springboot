@@ -9,17 +9,31 @@ import org.springframework.batch.item.file.transform.DelimitedLineAggregator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbAsyncTable;
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedAsyncClient;
+import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
+import software.amazon.awssdk.enhanced.dynamodb.model.PutItemEnhancedRequest;
+import software.amazon.awssdk.enhanced.dynamodb.model.PutItemEnhancedResponse;
+import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient;
 
 import javax.batch.runtime.StepExecution;
 import javax.batch.runtime.context.StepContext;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 public class CustomFlatFileItemWriter extends FlatFileItemWriter<Cliente> {
     @Autowired
     ExecutionContext executionContext;
 
     private int updateCount = 0;
+
+    @Autowired
+    private DynamoDbEnhancedAsyncClient dynamoDbEnhancedAsyncClient;
+
+    @Autowired
+    private DynamoDbAsyncClient dynamoDbAsyncClient;
 
     public CustomFlatFileItemWriter(Resource resource) {
         setResource(new FileSystemResource("clientes.txt"));
@@ -38,8 +52,19 @@ public class CustomFlatFileItemWriter extends FlatFileItemWriter<Cliente> {
         Iterator var3 = items.iterator();
 
         while(var3.hasNext()) {
-            Object item = var3.next();
-            lines.append(this.lineAggregator.aggregate((Cliente) item)).append(this.lineSeparator);
+            Cliente item = (Cliente) var3.next();
+
+            PutItemEnhancedRequest<Cliente> putItemEnhancedRequest = PutItemEnhancedRequest
+                    .builder(Cliente.class)
+                    .item(item)
+                    .build();
+
+            CompletableFuture<PutItemEnhancedResponse<Cliente>> completableFuture = dynamoDbEnhancedAsyncClient.table("tbb001_clientes", TableSchema.fromBean(Cliente.class))
+                    .putItemWithResponse(putItemEnhancedRequest);
+
+            PutItemEnhancedResponse<Cliente> response = completableFuture.join();
+
+            lines.append(this.lineAggregator.aggregate(item)).append(this.lineSeparator);
             updateCount++;
         }
 

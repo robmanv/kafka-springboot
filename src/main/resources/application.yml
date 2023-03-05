@@ -71,7 +71,7 @@ spring:
             registry:
                 url: http://localhost:8081
     profiles:
-        active: local
+        active: default
 topic:
     name:
         consumer: topico.avro.clientes
