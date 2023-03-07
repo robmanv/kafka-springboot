@@ -102,6 +102,8 @@ public class Bean {
         NettyNioAsyncHttpClient.Builder httpClientBuilder =
                 NettyNioAsyncHttpClient.builder()
                         .connectionTimeout(Duration.ofMinutes(5))
+                        .connectionTimeout(Duration.ofMinutes(5))
+                        .writeTimeout(Duration.ofMinutes(5))
                         .maxConcurrency(100);
 
         ClientOverrideConfiguration.Builder overrideConfig =

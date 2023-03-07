@@ -1,7 +1,6 @@
 package br.com.kafka.adapters.out;
 
 import br.com.kafka.core.entities.Cliente;
-import feign.Client;
 import org.springframework.batch.core.annotation.AfterStep;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.file.FlatFileItemWriter;
@@ -10,30 +9,23 @@ import org.springframework.batch.item.file.transform.DelimitedLineAggregator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
-import software.amazon.awssdk.enhanced.dynamodb.DynamoDbAsyncTable;
-import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedAsyncClient;
-import software.amazon.awssdk.enhanced.dynamodb.MappedTableResource;
-import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
-import software.amazon.awssdk.enhanced.dynamodb.internal.client.DefaultDynamoDbAsyncTable;
+import software.amazon.awssdk.enhanced.dynamodb.*;
 import software.amazon.awssdk.enhanced.dynamodb.model.*;
 import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient;
-import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
-import software.amazon.awssdk.services.dynamodb.model.Put;
-import software.amazon.awssdk.services.dynamodb.model.TransactWriteItem;
-import software.amazon.awssdk.services.dynamodb.model.TransactWriteItemsResponse;
+import software.amazon.awssdk.services.dynamodb.model.*;
 
-import javax.batch.runtime.StepExecution;
-import javax.batch.runtime.context.StepContext;
-import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class CustomFlatFileItemWriter extends FlatFileItemWriter<Cliente> {
     @Autowired
     ExecutionContext executionContext;
 
     private int updateCount = 0;
+
+    private AtomicReference<Integer> itemsNaoAtualizados = new AtomicReference<>(0);
+
 
     @Autowired
     private DynamoDbEnhancedAsyncClient dynamoDbEnhancedAsyncClient;
@@ -67,17 +59,28 @@ public class CustomFlatFileItemWriter extends FlatFileItemWriter<Cliente> {
         while(var3.hasNext()) {
             Cliente item = (Cliente) var3.next();
 
+            HashMap<String, AttributeValue> map = new HashMap<>();
+            map.put(":id", AttributeValue.builder().s(Integer.toString(item.getId())).build());
+
             PutItemEnhancedRequest<Cliente> putItemEnhancedRequest = PutItemEnhancedRequest
                     .builder(Cliente.class)
                     .item(item)
+                    .conditionExpression(Expression.builder().expression("id <> :id").expressionValues(map).build())
+                    .returnValues(ReturnValue.ALL_OLD)
                     .build();
 
             listTransactWriteItem.add(TransactWriteItem.builder()
                     .put(Put.builder()
                             .tableName("tbb001_clientes")
                             .item(getMapAttributeValue(item))
+                            .conditionExpression("id <> :id")
+                            .expressionAttributeValues(map)
                             .build())
                     .build());
+
+            transactWriteItemsEnhancedRequest
+                    .addPutItem(new CustomMappedTableResource(), putItemEnhancedRequest);
+
 
             listCliente.add(item);
             listWriteBatch.add(WriteBatch.builder(Cliente.class).mappedTableResource(new CustomMappedTableResource()).addPutItem(item).build());
@@ -94,8 +97,6 @@ public class CustomFlatFileItemWriter extends FlatFileItemWriter<Cliente> {
 //            List<TransactPutItemEnhancedRequest> transactWriteItems = new ArrayList<>();
 //            transactWriteItems.add(transactPutItemEnhancedRequest);
 
-            transactWriteItemsEnhancedRequest.addPutItem(new CustomMappedTableResource(), item);
-
 //            CompletableFuture<PutItemEnhancedResponse<Cliente>> completableFuture = dynamoDbEnhancedAsyncClient
 //                    .table("tbb001_clientes", TableSchema.fromBean(Cliente.class))
 //                    .putItemWithResponse(putItemEnhancedRequest);
@@ -109,9 +110,10 @@ public class CustomFlatFileItemWriter extends FlatFileItemWriter<Cliente> {
 
 //        for (int i = 0; i < listWriteBatch.size(); i += 25) {
 //            List<WriteBatch> batch = listWriteBatch.subList(i, Math.min(i + 25, listWriteBatch.size()));
-            BatchWriteItemEnhancedRequest batchWriteItemEnhancedRequest = BatchWriteItemEnhancedRequest.builder()
-                    .writeBatches(listWriteBatch.subList(1, 25))
-                    .build();
+
+        BatchWriteItemEnhancedRequest batchWriteItemEnhancedRequest = BatchWriteItemEnhancedRequest.builder()
+                .writeBatches(listWriteBatch.subList(1, Math.min(listWriteBatch.size(), 10)))
+                .build();
 //            dynamoDbEnhancedAsyncClient.batchWriteItem(BatchWriteItemEnhancedRequest.builder().addWriteBatch(WriteBatch.builder(Cliente.class).addPutItem(batch.get(i)).build()).build());
 //        }
 
@@ -140,29 +142,41 @@ public class CustomFlatFileItemWriter extends FlatFileItemWriter<Cliente> {
 //                    }});
 
         CompletableFuture<Void> result =
-                dynamoDbEnhancedAsyncClient.transactWriteItems(transactWriteItemsEnhancedRequest.build()).thenApply(x -> { return x;}).whenComplete((response, error) -> {
-                    if (error != null) {
-                        // tratamento de erro
-                        System.out.printf("error" + error);
-                    } else {
-                        System.out.printf("response" + response);
-                        // verifica se o item foi inserido ou atualizado
-//                            List<TransactWriteItemsResponse> responses = response.responses();
-//                            for (TransactWriteItemsResponse itemResponse : responses) {
-//                                if (itemResponse instanceof TransactPutItems) {
-//                                    TransactPutItemResponse putItemResponse = (TransactPutItemResponse) itemResponse;
-//                                    // verifica se o item foi inserido ou atualizado
-//                                    if (putItemResponse.item() != null) {
-//                                        System.out.println("Item inserido com sucesso: " + putItemResponse.item());
-//                                    } else {
-//                                        System.out.println("Item atualizado com sucesso.");
-//                                    }
-//                                } else if (itemResponse instanceof TransactDeleteItemEnhancedRequest) {
-//                                    // tratamento para operação de exclusão
-//                                }
-//                            }
-//                        }
-                    }});
+                dynamoDbEnhancedAsyncClient
+                        .transactWriteItems(transactWriteItemsEnhancedRequest.build())
+                        .thenApply(x -> { return x;})
+                        .exceptionally(error -> {
+                            if (error instanceof ConditionalCheckFailedException) {
+                                ConditionalCheckFailedException e = (ConditionalCheckFailedException) error;
+
+                                itemsNaoAtualizados.getAndSet(itemsNaoAtualizados.get() + 1);
+                            }
+
+                            return null;
+                        })
+                        .whenComplete((response, error) -> {
+                            if (error != null) {
+                                // tratamento de erro
+
+                                if (error instanceof ConditionalCheckFailedException) {
+                                    ConditionalCheckFailedException e = (ConditionalCheckFailedException) error;
+
+                                    itemsNaoAtualizados.getAndSet(itemsNaoAtualizados.get() + 1);
+                                }
+
+                                System.out.printf("error" + error);
+                            } else {
+//                                PutItemEnhancedResponse<Cliente> writeResult = response.getPutItemResults().get(0);
+                                // Cria um objeto PutItemEnhancedResponse a partir do WriteResult
+                                PutItemEnhancedResponse<Cliente> putItemResponse = PutItemEnhancedResponse
+                                        .builder(Cliente.class)
+//                                        .attributes(response.attributes())
+                                        .build();
+//                                return putItemResponse;
+
+                                System.out.printf("response" + response);
+                            }
+                        });
 
         result.join();
 
@@ -177,6 +191,7 @@ public class CustomFlatFileItemWriter extends FlatFileItemWriter<Cliente> {
     @AfterStep
     public void afterStep() {
         System.out.println("UPDATE COUNT: " + updateCount);
+        System.out.println("NAO ATUALIZADOS: " + itemsNaoAtualizados.get());
     }
 
     public Map<String, AttributeValue> getMapAttributeValue(Cliente item) {

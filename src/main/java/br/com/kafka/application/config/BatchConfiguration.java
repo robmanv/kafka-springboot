@@ -90,7 +90,7 @@ public class BatchConfiguration {
     @org.springframework.context.annotation.Bean
     public Step myStep() {
         return stepBuilderFactory.get("myStep")
-                .<Cliente, Cliente>chunk(50)
+                .<Cliente, Cliente>chunk(10)
 //                .reader(myFlatFileReader())
                 .reader(excelFlatFileReader())
                 .processor(customItemProcessor())

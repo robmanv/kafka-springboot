@@ -12,3 +12,5 @@ aws --region sa-east-1 --endpoint-url http://localhost:4566 --profile localstack
 aws --region sa-east-1 --endpoint-url http://localhost:4566 --profile localstack dynamodb query --table-name tbb001_clientes --key-condition-expression "id = :id" --expression-attribute-values '{ ":id": {"S": "1"} }'
 
 aws --region sa-east-1 --endpoint-url http://localhost:4566 --profile localstack dynamodb query --table-name tbb001_clientes --key-condition-expression "id = :id" --expression-attribute-values file://expression-attributes.json
+
+aws --endpoint-url=http://localhost:4566 dynamodb describe-table --table-name tbb001_clientes

@@ -24,6 +24,6 @@ public class CustomMappedTableResource implements MappedTableResource<Cliente> {
 
     @Override
     public Key keyFrom(Cliente cliente) {
-        return Key.builder().partitionValue("id").sortValue("name").build();
+        return Key.builder().partitionValue(cliente.getId()).sortValue(cliente.getName()).build();
     }
 }
