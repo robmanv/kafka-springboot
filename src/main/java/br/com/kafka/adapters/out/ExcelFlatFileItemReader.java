@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import br.com.kafka.core.entities.Cliente;
+import br.com.kafka.core.utils.ProgressBar;
+import lombok.Getter;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -16,9 +18,11 @@ import org.springframework.batch.item.ParseException;
 import org.springframework.batch.item.UnexpectedInputException;
 import org.springframework.batch.item.file.ResourceAwareItemReaderItemStream;
 import org.springframework.batch.item.support.AbstractItemCountingItemStreamItemReader;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
+@Getter
 public class ExcelFlatFileItemReader extends AbstractItemCountingItemStreamItemReader<Cliente>
         implements ResourceAwareItemReaderItemStream<Cliente> {
 
@@ -26,6 +30,7 @@ public class ExcelFlatFileItemReader extends AbstractItemCountingItemStreamItemR
     private Workbook workbook;
     private Sheet sheet;
     private int rowCount = 0;
+    private int rowMaxCount = 0;
 
     @Override
     public Cliente doRead() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
@@ -51,6 +56,7 @@ public class ExcelFlatFileItemReader extends AbstractItemCountingItemStreamItemR
             workbook = new XSSFWorkbook(inputStream);
             sheet = workbook.getSheetAt(0);
             rowCount = 1;
+            rowMaxCount = sheet.getPhysicalNumberOfRows();
         } catch (IOException e) {
             throw new ItemStreamException("Failed to initialize Excel reader", e);
         }

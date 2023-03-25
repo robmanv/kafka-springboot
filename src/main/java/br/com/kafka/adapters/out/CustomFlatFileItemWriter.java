@@ -1,6 +1,7 @@
 package br.com.kafka.adapters.out;
 
 import br.com.kafka.core.entities.Cliente;
+import br.com.kafka.core.utils.ProgressBar;
 import org.springframework.batch.core.annotation.AfterStep;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.file.FlatFileItemWriter;
@@ -32,6 +33,9 @@ public class CustomFlatFileItemWriter extends FlatFileItemWriter<Cliente> {
 
     @Autowired
     private DynamoDbAsyncClient dynamoDbAsyncClient;
+
+    @Autowired
+    private ProgressBar progressBar;
 
     public CustomFlatFileItemWriter(Resource resource) {
         setResource(new FileSystemResource("clientes.txt"));
@@ -105,6 +109,7 @@ public class CustomFlatFileItemWriter extends FlatFileItemWriter<Cliente> {
 
             lines.append(this.lineAggregator.aggregate(item)).append(this.lineSeparator);
             updateCount++;
+            progressBar.print(updateCount);
         }
 
 
@@ -174,7 +179,8 @@ public class CustomFlatFileItemWriter extends FlatFileItemWriter<Cliente> {
                                         .build();
 //                                return putItemResponse;
 
-                                System.out.printf("response" + response);
+//                                System.out.printf("response" + response);
+
                             }
                         });
 

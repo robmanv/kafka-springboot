@@ -32,7 +32,7 @@ public class CustomItemProcessorListener implements ItemProcessListener<Cliente,
 
     @AfterStep
     public void afterStep(StepExecution stepExecution) {
-        System.out.println("after step");
+        System.out.println("]");
     }
 
     public int getProcessedCount() {

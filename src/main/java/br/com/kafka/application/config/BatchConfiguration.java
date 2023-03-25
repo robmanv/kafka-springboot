@@ -2,6 +2,10 @@ package br.com.kafka.application.config;
 
 import br.com.kafka.adapters.out.*;
 import br.com.kafka.core.entities.Cliente;
+import br.com.kafka.core.utils.ProgressBar;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -41,6 +45,9 @@ public class BatchConfiguration {
     @Value("classpath:clientes.txt")
     private Resource outputFile;
 
+    @Autowired
+    ProgressBar progressBar;
+
 //    @Autowired
 //    private JobLauncher jobLauncher;
 //
@@ -77,6 +84,7 @@ public class BatchConfiguration {
         excelFlatFileItemReader.setName("excelFileReader");
         excelFlatFileItemReader.setResource(inputFileXLS);
         excelFlatFileItemReader.doOpen();
+        progressBar.setSize(excelFlatFileItemReader.getRowMaxCount());
 
         return excelFlatFileItemReader;
     }

@@ -5,6 +5,7 @@ import br.com.kafka.adapters.exception.CustomErrorDecoder;
 import br.com.kafka.adapters.out.ListenerKafka;
 import br.com.kafka.core.entities.Cliente;
 import br.com.kafka.core.entities.Post;
+import br.com.kafka.core.utils.ProgressBar;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import com.amazonaws.regions.Region;
@@ -83,6 +84,14 @@ public class Bean {
     }
 
     @org.springframework.context.annotation.Bean
+    public ProgressBar progressBar() {
+        ProgressBar progressBar = new ProgressBar();
+        progressBar.setMaxSquares(100);
+        return progressBar;
+    }
+
+
+    @org.springframework.context.annotation.Bean
     public LoggingErrorHandler errorHandler() {
         return new LoggingErrorHandler();
     }
@@ -106,18 +115,21 @@ public class Bean {
                         .writeTimeout(Duration.ofMinutes(5))
                         .maxConcurrency(100);
 
-        ClientOverrideConfiguration.Builder overrideConfig =
-                ClientOverrideConfiguration.builder();
-
         ClientAsyncConfiguration.Builder asyncConfig =
                 ClientAsyncConfiguration.builder();
 
+        ClientOverrideConfiguration overrideConfig = ClientOverrideConfiguration.builder()
+                .apiCallTimeout(Duration.ofSeconds(5)) // tempo limite de 5 segundos para cada solicitação
+                .apiCallAttemptTimeout(Duration.ofSeconds(10)) // tempo limite máximo de 10 segundos para cada tentativa de solicitação
+                .build();
+
+
         DynamoDbAsyncClient client =
                 DynamoDbAsyncClient.builder()
-                        .httpClientBuilder(httpClientBuilder)
-                        .overrideConfiguration(overrideConfig.build())
-                        .asyncConfiguration(asyncConfig.build())
+//                        .httpClientBuilder(httpClientBuilder)
+//                        .asyncConfiguration(asyncConfig.build())
                         .endpointOverride(URI.create("http://localhost:4566"))
+                        .overrideConfiguration(overrideConfig)
                         .build();
 
         return client;
