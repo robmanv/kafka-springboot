@@ -18,6 +18,9 @@ import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
 import feign.RequestInterceptor;
 import feign.codec.ErrorDecoder;
 import feign.okhttp.OkHttpClient;
+import io.netty.channel.*;
+import io.netty.handler.logging.LogLevel;
+import io.netty.handler.logging.LoggingHandler;
 import org.apache.http.entity.ContentType;
 import org.modelmapper.ModelMapper;
 import org.springframework.batch.item.ExecutionContext;
@@ -34,6 +37,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient;
 import java.net.URI;
 import java.time.Duration;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Configuration
 public class Bean {
@@ -87,6 +91,7 @@ public class Bean {
     public ProgressBar progressBar() {
         ProgressBar progressBar = new ProgressBar();
         progressBar.setMaxSquares(100);
+        progressBar.setCount(new AtomicInteger(0));
         return progressBar;
     }
 
@@ -108,6 +113,9 @@ public class Bean {
 
     @org.springframework.context.annotation.Bean
     public DynamoDbAsyncClient dynamoDbAsyncClient() {
+
+        ChannelHandler loggingHandler = new LoggingHandler(LogLevel.INFO);
+
         NettyNioAsyncHttpClient.Builder httpClientBuilder =
                 NettyNioAsyncHttpClient.builder()
                         .connectionTimeout(Duration.ofMinutes(5))
@@ -145,5 +153,13 @@ public class Bean {
                         .build();
 
         return enhancedClient;
+    }
+
+    public class MyChannelInitializer extends ChannelInitializer<Channel> {
+        @Override
+        protected void initChannel(Channel ch) throws Exception {
+            ChannelPipeline pipeline = ch.pipeline();
+            pipeline.addLast(new LoggingHandler(LogLevel.INFO));
+        }
     }
 }

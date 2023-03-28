@@ -10,12 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class CustomItemProcessor implements ItemProcessor<Cliente, Cliente> {
     @Autowired
     ExecutionContext executionContext;
 
-    private int updateCount = 0;
+    private AtomicInteger updateCount = new AtomicInteger(0);
     private AtomicDouble qtdProcessados;
     private ConcurrentHashMap<String, AtomicDouble> qtdMap;
 
@@ -34,17 +35,17 @@ public class CustomItemProcessor implements ItemProcessor<Cliente, Cliente> {
     }
 
     public int getUpdateCount() {
-        return updateCount;
+        return updateCount.get();
     }
 
     @AfterProcess
     public void afterProcess(Cliente inputCliente, Cliente outputCliente) {
-        updateCount++;
+        updateCount.addAndGet(1);
     }
 
     @AfterStep
     public void afterStep() {
-        System.out.println("UPDATE COUNT DO ITEM PROCESSOR: " + updateCount);
+        System.out.println("UPDATE COUNT DO ITEM PROCESSOR: " + updateCount.get());
     }
 
 }

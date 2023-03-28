@@ -17,13 +17,14 @@ import software.amazon.awssdk.services.dynamodb.model.*;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class CustomFlatFileItemWriter extends FlatFileItemWriter<Cliente> {
     @Autowired
     ExecutionContext executionContext;
 
-    private int updateCount = 0;
+    private AtomicInteger updateCount = new AtomicInteger(0);
 
     private AtomicReference<Integer> itemsNaoAtualizados = new AtomicReference<>(0);
 
@@ -108,8 +109,8 @@ public class CustomFlatFileItemWriter extends FlatFileItemWriter<Cliente> {
 //            PutItemEnhancedResponse<Cliente> response = completableFuture.join();
 
             lines.append(this.lineAggregator.aggregate(item)).append(this.lineSeparator);
-            updateCount++;
-            progressBar.print(updateCount);
+            progressBar.print();
+            updateCount.getAndSet(progressBar.getCount().get());
         }
 
 
@@ -190,13 +191,9 @@ public class CustomFlatFileItemWriter extends FlatFileItemWriter<Cliente> {
         return lines.toString();
     }
 
-    public int getUpdateCount() {
-        return updateCount;
-    }
-
     @AfterStep
     public void afterStep() {
-        System.out.println("UPDATE COUNT: " + updateCount);
+        System.out.println("UPDATE COUNT: " + updateCount.get());
         System.out.println("NAO ATUALIZADOS: " + itemsNaoAtualizados.get());
     }
 
