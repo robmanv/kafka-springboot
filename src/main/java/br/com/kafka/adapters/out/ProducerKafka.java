@@ -14,6 +14,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 @Slf4j
 @Service
@@ -48,6 +49,8 @@ public class ProducerKafka implements ProducerKafkaPort {
         } catch (IOException e) {
             e.printStackTrace();
             return null;
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
         }
 
 

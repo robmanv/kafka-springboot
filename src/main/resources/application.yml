@@ -39,12 +39,14 @@ redis:
         port: 6379
         server: master.tf-rep-group-1.bjabsj.sae1.cache.amazonaws.com
         timeout: 2000
-    server: redis://default:redispw@localhost:49153
+    server: redis://default:redispw@localhost:6379
 schema:
     registry:
-        url: http://localhost:8081
+        url: ${SCHEMA_REGISTRY_URL:http://localhost:8081}
 server:
     port: 8090
+    address: 0.0.0.0
+
 some:
     prop: 'max.poll.records: 10'
 spring:
@@ -55,23 +57,23 @@ spring:
     kafka:
         consumer:
             auto-offset-reset: earliest
-            bootstrap-servers: http://localhost:9092
+            bootstrap-servers: ${BROKER_URL:http://localhost:9092}
             group-id: group_id
             key-deserializer: org.apache.kafka.common.serialization.LongDeserializer
             schema:
                 registry:
-                    url: http://localhost:8081
+                    url: ${SCHEMA_REGISTRY_URL:http://localhost:8081}
             value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
         producer:
-            bootstrap-servers: http://localhost:9092
+            bootstrap-servers: ${BROKER_URL:http://localhost:9092}
             group-id: group_id
             key-serializer: org.apache.kafka.common.serialization.LongSerializer
             value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
         schema:
             registry:
-                url: http://localhost:8081
+                url: ${SCHEMA_REGISTRY_URL:http://localhost:8081}
     profiles:
-        active: default
+        active: ${SPRING_PROFILE:local}
 topic:
     name:
         consumer: topico.avro.clientes

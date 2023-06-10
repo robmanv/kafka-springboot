@@ -120,6 +120,9 @@ public class CustomFlatFileItemWriter extends FlatFileItemWriter<Cliente> {
         BatchWriteItemEnhancedRequest batchWriteItemEnhancedRequest = BatchWriteItemEnhancedRequest.builder()
                 .writeBatches(listWriteBatch.subList(1, Math.min(listWriteBatch.size(), 10)))
                 .build();
+
+//        WriteBatch writeBatch = WriteBatch.builder(Cliente.class)..build()
+
 //            dynamoDbEnhancedAsyncClient.batchWriteItem(BatchWriteItemEnhancedRequest.builder().addWriteBatch(WriteBatch.builder(Cliente.class).addPutItem(batch.get(i)).build()).build());
 //        }
 
@@ -149,6 +152,7 @@ public class CustomFlatFileItemWriter extends FlatFileItemWriter<Cliente> {
 
         CompletableFuture<Void> result =
                 dynamoDbEnhancedAsyncClient
+//                        .batchWriteItem(BatchWriteItemEnhancedRequest.builder().addWriteBatch().build())
                         .transactWriteItems(transactWriteItemsEnhancedRequest.build())
                         .thenApply(x -> { return x;})
                         .exceptionally(error -> {
