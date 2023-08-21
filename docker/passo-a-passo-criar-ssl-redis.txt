@@ -1,0 +1,24 @@
+# Gerar chave privada para o servidor
+openssl x509 -req -days 365 -in server-csr.pem -signkey server-key.pem -out server-cert.pem
+
+# Gerar solicitação de assinatura de certificado (CSR)
+openssl req -new -key server-key.pem -out server-csr.pem
+
+# Gerar certificado autoassinado a partir da CSR
+openssl x509 -req -days 365 -in server-csr.pem -signkey server-key.pem -out server-cert.pem
+
+# Concatenar o certificado e a chave em um único arquivo (opcional)
+cat server-cert.pem server-key.pem > redis-server.pem
+
+copiar server-cert.pem para certificate.crt
+
+
+# Extrair o certificado do arquivo PEM para o formato DER
+openssl x509 -outform der -in server-cert.pem -out server-cert.der
+
+
+abrir pasta onde está o cacerts da jdk
+
+# Importar o certificado no keystore Java (cacerts)
+# Certifique-se de substituir <JAVA_HOME> pelo caminho para a instalação do JDK 12
+keytool -import -trustcacerts -keystore cacerts -storepass changeit -alias redis_cert -file server-cert.der
