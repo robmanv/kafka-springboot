@@ -14,5 +14,6 @@ public class RedisConfig {
     @Bean
     public Jedis redisFactory() {
         return new Jedis(redisServer);
+//        return new Jedis("http://redis:6379");
     }
 }

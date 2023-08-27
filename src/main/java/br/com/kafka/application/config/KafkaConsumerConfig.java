@@ -37,12 +37,14 @@ public class KafkaConsumerConfig {
     public KafkaConsumer<Long, Cliente> consumer() {
         Map<String, Object> props = new HashMap<>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
+//        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "http://broker:9092");
         props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
         props.put(ErrorHandlingDeserializer.KEY_DESERIALIZER_CLASS, keyDeserializer);
         props.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, valueDeserializer);
         props.put("schema.registry.url", schemaRegistryAddress);
+//        props.put("schema.registry.url", "http://schema-registry:8081");
         props.put("specific.avro.reader", true);
 
         return new KafkaConsumer<Long, Cliente>(props);

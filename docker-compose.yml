@@ -185,20 +185,24 @@ services:
       - "6379:6379"
 
   kafka-springboot:
-    image: spring-kafka1
+    image: robmanv/kafka
     hostname: kafka-springboot-app
     network_mode: host
     ports:
-      - "8091:8091"
+      - "0.0.0.0:8090:8090"
+    expose:
+      - 8090
     extra_hosts:
       - "host.docker.internal:host-gateway"
     container_name: kafka-springboot-app
+    command: tail -f /dev/null
     environment:
       AWS_REGION: sa-east-1
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
-      BROKER_URL: http://broker:9092
-      SCHEMA_REGISTRY_URL: http://schema-registry:8081
+      BROKER_URL: http://localhost:9092
+      SCHEMA_REGISTRY_URL: http://localhost:8081
+      REDIS_URL: http://localhost:6379
     depends_on:
       - broker
       - schema-registry
