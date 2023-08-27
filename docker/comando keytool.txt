@@ -1,0 +1,191 @@
+-- Criando a privatekey.key e csr.pem
+openssl req -newkey rsa:2048 -keyout privatekey.key -out csr.pem
+
+-- Criando certificado auto assinado por 365 dias, não é pra produção
+openssl x509 -req -days 365 -in csr.pem -signkey privatekey.key -out certificate.pem
+
+-- Criando a keystore de certificados
+keytool -genkeypair -alias myalias -keyalg RSA -keysize 2048 -keystore keystore.jks
+
+-- Exportando meu certificate.pem pra keystore
+keytool -export -alias myalias -file certificate.pem -keystore keystore.jks
+
+-- Converter keystore no formato .p12
+openssl pkcs12 -export -in certificate.pem -inkey privatekey.key -out keystore.p12
+
+
+
+openssl req -newkey rsa:2048 -keyout privatekey.key -out csr.pem
+
+
+
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout privatekey.key -out certificate.crt
+
+keytool -genkeypair -alias myalias -keyalg RSA -keysize 2048 -keystore keystore.jks
+
+keytool -export -alias myalias -file certificate.crt -keystore keystore.jks
+
+openssl pkcs12 -export -in certificate.crt -inkey privatekey.key -out keystore.p12
+
+
+
+--Generate 2048-bit RSA private key:
+openssl genrsa -out key.pem 2048
+
+--Generate a Certificate Signing Request:
+openssl req -new -sha256 -key key.pem -out csr.csr
+
+--Generate a self-signed x509 certificate suitable for use on web servers.
+openssl req -x509 -sha256 -days 365 -key key.pem -in csr.csr -out certificate.pem
+
+--Create SSL identity file in PKCS12 as mentioned here
+openssl pkcs12 -export -out client-identity.p12 -inkey key.pem -in certificate.pem
+
+
+keytool -genkeypair -alias myalias -keyalg RSA -keysize 2048 -keystore keystore.jks
+keytool -export -alias myalias -file certificate.crt -keystore keystore.jks
+
+
+
+docker build -t redis-with-ssl .
+
+docker run -d -p 6380:6380 redis-with-ssl
+
+***
+openssl req -x509 -newkey rsa:4096 -keyout server-key.pem -out server-csr.pem -days 10000 -nodes
+openssl x509 -req -days 365 -in server-csr.pem -signkey server-key.pem -out server-cert.pem
+
+openssl x509 -outform der -in server-cert.pem -out server-cert.der
+keytool -import -trustcacerts -keystore cacerts -storepass changeit -alias redis_cert2 -file server-cert.der
+
+***
+
+
+
+openssl req -x509 -newkey rsa:2048 -keyout server-key.pem -out server-cert.pem -days 365
+
+====================
+
+-- criar a keystore:
+
+keytool -genkeypair -alias myalias -keyalg RSA -keysize 2048 -keystore keystore.jks
+
+-- deletar o alias
+keytool -delete -alias myalias -keystore keystore.jks
+
+-- importar o crt
+keytool -import -file certificate.crt -alias myalias -keystore keystore.jks -storetype JKS
+
+
+keytool -importkeystore -srckeystore keystore.jks -destkeystore keystore.p12 -deststoretype PKCS12
+
+
+ 54  keytook -list -keystore keystore.jks
+   55  keytool -list -keystore keystore.jks
+   56  keytool -list -keystore keystore.jks
+   57  keytool -list -keystore keystore.jks
+   58  keytool -list -keystore keystore.jks
+   59  keytool -list -keystore keystore.jks
+   60  keytool -storepasswd -keystore keystore.jks
+   61  keytool -storepasswd -keystore keystore.jks
+   62  keytool -storepasswd -keystore keystore.jks
+   63  keytool -list -keystore keystore.jks
+   64  keytool -storepasswd -keystore keystore.jks
+   65  keytool -storepasswd -keystore keystore.jks
+   66  keytool -storepasswd -keystore keystore.jks
+   67  openssl x509 -outform der -in key.pem -out key.der
+   68  openssl x509 -outform der -in cert.pem -out cert.der
+   69  keytool -import -file cert.der -alias certalias -keystore keystore2.jks -storepass changeit -keypass changeit
+   70  ls
+   71  openssl x509 -req -days 365 -in cert.pem -signkey privatekey.key -out certificate.pem
+   72  openssl req -newkey rsa:2048 -keyout privatekey.key -out csr.pem
+   73  openssl x509 -req -days 365 -in csr.pem -signkey privatekey.key -out certificate.pem
+   74  openssl pkcs12 -export -in certificate.pem -inkey privatekey.key -out keystore.p12
+   75  keytool -genkeypair -alias myalias -keyalg RSA -keysize 2048 -keystore keystore3.jks
+   76  keytool -export -alias myalias -file certificate.pem -keystore keystore.jks
+   77  keytool -export -alias myalias -file certificate.pem -keystore keystore3.jks
+   78  openssl pkcs12 -export -in certificate.pem -inkey privatekey.key -out keystore3.p12
+   79  openssl pkcs12 -export -in csr.pem -inkey privatekey.key -out keystore3.p12
+   80  openssl pkcs12 -export -in certificate.pem -inkey privatekey.key -out keystore.p12
+   81  openssl req -newkey rsa:2048 -keyout privatekey.key -out csr.pem
+   82  openssl x509 -req -days 365 -in csr.pem -signkey privatekey.key -out certificate.pem
+   83  keytool -genkeypair -alias myalias -keyalg RSA -keysize 2048 -keystore keystore.jks
+   84  keytool -export -alias myalias -file certificate.pem -keystore keystore.jks
+   85  keytool -export -alias myalias -file certificate.pem -keystore keystore.jks
+   86  openssl pkcs12 -export -in certificate.pem -inkey privatekey.key -out keystore.p12
+   87  openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout privatekey.key -out certificate.crt
+   88  keytool -genkeypair -alias myalias -keyalg RSA -keysize 2048 -keystore keystore.jks
+   89  keytool -export -alias myalias -file certificate.crt -keystore keystore.jks
+   90  openssl pkcs12 -export -in certificate.crt -inkey privatekey.key -out keystore.p12
+   91  openssl genrsa -out key.pem 2048
+   92  openssl req -new -sha256 -key key.pem -out csr.csr
+   93  openssl req -x509 -sha256 -days 365 -key key.pem -in csr.csr -out certificate.pem
+   94  openssl pkcs12 -export -out client-identity.p12 -inkey key.pem -in certificate.pem
+   95  keytool -genkeypair -alias myalias -keyalg RSA -keysize 2048 -keystore keystore.jks
+   96  keytool -export -alias myalias -file certificate.pem -keystore keystore.jks
+   97  cd docker
+   98  docker build -t redis-with-ssl .
+   99  docker run -d -p 6380:6380 redis-with-ssl
+  100  docker build -t redis-with-ssl .
+  101  docker run -d -p 6380:6380 redis-with-ssl
+  102  keytool -export -rfc -alias myalias -file certificate.crt -keystore keystore.jks
+  103  docker build -t redis-with-ssl .
+  104  docker run -d -p 6380:6380 redis-with-ssl
+  105  docker run -d -p 6380:6380 redis-with-ssl
+  106  docker build -t redis-with-ssl .
+  107  docker run -d -p 6380:6380 redis-with-ssl
+  108  docker build -t redis-with-ssl .
+  109  docker run -d -p 6380:6380 redis-with-ssl
+  110  openssl req -new -newkey rsa:2048 -days 365 -nodes -x509 -keyout server-key.pem -out server-cert.pem
+  111  openssl x509 -in certificate.pem -outform der -out certificate.der
+  112  openssl x509 -in certificate.der -inform der -out certificate.crt
+  113  keytool -genkeypair -alias myalias -keyalg RSA -keysize 2048 -keystore keystore.jks
+  114  keytool -export -alias myalias -file certificate.crt -keystore keystore.jks
+  115  openssl x509 -in certificate.der -inform der -out certificate.crt
+  116  openssl x509 -in certificate.der -inform der -out certificate.crt
+  117  keytool -import -file certificate.crt -alias myalias -keystore keystore.jks
+  118  keytool -alias myalias -keyalg RSA -keysize 2048 -keystore keystore.jks
+  119  keytool -alias myalias -keyalg RSA -keysize 2048 -keystore keystore.jks -importcert certificate.crt
+  120  keytool -genkey -alias myalias -keyalg RSA -keysize 2048 -keystore keystore.jks
+  121  keytool -import -file certificate.crt -alias myalias -keystore keystore.jks
+  122  openssl genpkey -algorithm RSA -out privatekey.key
+  123  openssl req -new -key privatekey.key -out csr.pem
+  124  openssl x509 -req -days 365 -in csr.pem -signkey privatekey.key -out certificate.crt
+  125  keytool -import -file certificate.crt -alias myalias -keystore keystore.jks
+  126  keytool -list -v -keystore keystore.jks
+  127  openssl x509 -noout -modulus -in certificate.crt | openssl md5
+  128  openssl rsa -noout -modulus -in privatekey.key | openssl md5
+  129  keytool -delete -alias myalias -keystore keystore.jks
+  130  keytool -import -file certificate.crt -alias myalias -keystore keystore.jks -storetype JKS
+  131  keytool -list -v -keystore keystore.jks
+  132  docker build -t redis-with-ssl .
+  133  docker run -d -p 6380:6380 redis-with-ssl
+  134  openssl pkcs12 -export -in certificate.crt -inkey privatekey.key -out keystore.p12 -name "MyAlias"
+  135  openssl req -x509 -newkey rsa:2048 -keyout server-key.pem -out server-cert.pem -days 365
+  136  docker build -t redis-with-ssl:latest .
+  137  docker run -d -p 6379:6379 --name redis-container-ssl redis-with-ssl
+  138  docker build -t redis-with-ssl:latest .
+  139  docker run -d -p 6379:6379 --name redis-container-ssl redis-with-ssl
+  140  docker run -d -p 6379:6379 --name redis-container-ssl redis-with-ssl
+  141  docker build -t redis-with-ssl:latest .
+  142  docker run -d -p 6379:6379 --name redis-container-ssl redis-with-ssl
+  143  docker build -t redis-with-ssl:latest .
+  144  docker run -d -p 6379:6379 --name redis-container-ssl redis-with-ssl
+  145  openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout server-key.pem -out server-cert.pem
+  146  docker build -t redis-with-ssl:latest .
+  147  docker run -d -p 6379:6379 --name redis-container-ssl redis-with-ssl
+  148  docker run -d -p 6380:6380 --name redis-container-ssl redis-with-ssl
+  149  keytool -genkeypair -alias myalias -keyalg RSA -keysize 2048 -keystore keystore.jks
+  150  keytool -import -trustcacerts -alias myalias -file certificate.crt -keystore keystore.jks
+  151  keytool -import -trustcacerts -alias myalias -file certificate.crt -keystore keystore.jks
+  152  keytool -import -file certificate.crt -alias myalias -keystore keystore.jks -storetype JKS
+  153  keytool -delete -alias myalias -keystore keystore.jks
+  154  keytool -import -file certificate.crt -alias myalias -keystore keystore.jks -storetype JKS
+  155  keytool -importkeystore -srckeystore keystore.jks -destkeystore keystore.p12 -deststoretype PKCS12
+  156  openssl req -new -x509 -keyout ca-key.pem -out ca-cert.pem -days 365
+  157  openssl req -new -keyout server-key.pem -out server-csr.pem
+  158* openssl x509 -req -in server-cert.pem -CA ca-cert.pem -CAkey ca-key.pem -CAcreateserial -out server-cert.pem -days 365
+  159  openssl x509 -in ca-cert.pem -outform der -out ca-cert.der
+  160  docker build -t redis-with-ssl:latest .
+  161  docker run -d -p 6380:6380 --name redis-container-ssl redis-with-ssl
+  162  history
