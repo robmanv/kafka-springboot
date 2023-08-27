@@ -26,6 +26,7 @@ public class KafkaProducerConfig {
     public KafkaProducer<String, GenericRecord> kafkaProducer() {
         Properties producerProps = new Properties();
         producerProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, brokersUrl);
+//        producerProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "http://broker:9092");
         producerProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, keySerializer);
         producerProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, valueSerializer);
         producerProps.put("schema.registry.url", registry);

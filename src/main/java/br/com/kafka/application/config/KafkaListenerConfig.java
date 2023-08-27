@@ -8,6 +8,7 @@ import org.apache.kafka.common.errors.TimeoutException;
 import org.apache.kafka.common.serialization.ByteArraySerializer;
 import org.apache.kafka.common.serialization.LongDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -53,10 +54,12 @@ public class KafkaListenerConfig {
     public ConsumerFactory<Long, Cliente> consumerFactory() {
         Map<String, Object> props = new HashMap<>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
+//        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "http://broker:9092");
         props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, keyDeserializer);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, valueDeserializer);
         props.put("schema.registry.url", schemaRegistryAddress);
+//        props.put("schema.registry.url", "http://schema-registry:8081");
         props.put("specific.avro.reader", true);
 
         ErrorHandlingDeserializer errorHandlingDeserializer = new ErrorHandlingDeserializer(new KafkaAvroDeserializer());
