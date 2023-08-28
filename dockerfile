@@ -43,5 +43,5 @@ RUN chown -R spring:spring /app
 USER spring:spring
 EXPOSE 8090
 
-ENTRYPOINT ["sh", "-c", "java -Xms256m -Xmx512m -noverify -XX:TieredStopAtLevel=1 -Duser.timezone=America/Sao_Paulo -Duser.language=pt -Duser.region=BR -Duser.country=BR -Dspring.jmx.enabled=true -Dspring.profiles.active=$SPRING_PROFILE -jar app.jar"]
-#ENTRYPOINT ["sh", "-c", "/app/wait-for-it.sh localhost 9092 java -Xms256m -Xmx512m -noverify -XX:TieredStopAtLevel=1 -Duser.timezone=America/Sao_Paulo -Duser.language=pt -Duser.region=BR -Duser.country=BR -Dspring.jmx.enabled=true -Dspring.profiles.active=$SPRING_PROFILE -jar app.jar"]
+#ENTRYPOINT ["sh", "-c", "java -Xms256m -Xmx512m -noverify -XX:TieredStopAtLevel=1 -Duser.timezone=America/Sao_Paulo -Duser.language=pt -Duser.region=BR -Duser.country=BR -Dspring.jmx.enabled=true -Dspring.profiles.active=$SPRING_PROFILE -jar app.jar"]
+ENTRYPOINT ["sh", "-c", "/app/wait-for-it.sh broker 9092 java -Xms256m -Xmx512m -noverify -XX:TieredStopAtLevel=1 -Duser.timezone=America/Sao_Paulo -Duser.language=pt -Duser.region=BR -Duser.country=BR -Dspring.jmx.enabled=true -Dspring.profiles.active=$SPRING_PROFILE -jar app.jar"]

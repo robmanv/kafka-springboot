@@ -2,6 +2,7 @@ package br.com.kafka.adapters.out;
 
 import br.com.kafka.core.entities.Cliente;
 import br.com.kafka.core.ports.ListenerKafkaPort;
+import br.com.kafka.core.ports.RedisPort;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -12,6 +13,8 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.stereotype.Service;
 import redis.clients.jedis.Jedis;
+
+import java.util.concurrent.ExecutionException;
 
 @Slf4j
 @Service
@@ -33,6 +36,9 @@ public class ListenerKafka implements ListenerKafkaPort {
     @Autowired
     private Jedis jedisFactory;
 
+    @Autowired
+    private RedisPort redisPort;
+
     @KafkaListener(topics = "${topic.name.consumer}",
             groupId = "${spring.kafka.consumer.group-id}",
             containerFactory = "kafkaListenerContainerFactory")
@@ -48,10 +54,13 @@ public class ListenerKafka implements ListenerKafkaPort {
 
         cliente = modelMapper.map(payload.value(), Cliente.class);
 
-        jedisFactory.set("chave1", cliente.toString());
-        String value = jedisFactory.get("chave1");
-
-        log.info("REDIS (CHAVE1) - GET --> {}", value);
+        try {
+            redisPort.upsertCacheEntry(String.valueOf(cliente.getId()), cliente.toString(), true);
+            log.info("REDIS RETURNED:" + redisPort.getCacheValue(String.valueOf(cliente.getId())));
+        } catch (RuntimeException | InterruptedException | ExecutionException e) {
+            log.error(e.getLocalizedMessage());
+            e.printStackTrace();
+        }
 
         log.info("CONSUMER: {}", cliente);
     }

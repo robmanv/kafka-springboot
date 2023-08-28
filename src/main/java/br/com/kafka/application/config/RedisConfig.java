@@ -13,7 +13,9 @@ public class RedisConfig {
 
     @Bean
     public Jedis redisFactory() {
-        return new Jedis(redisServer);
+        Jedis jedis =  new Jedis(redisServer);
+        jedis.auth("redispw");
+        return jedis;
 //        return new Jedis("http://redis:6379");
     }
 }
