@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="accountSettings">
-    <option name="activeProfile" value="profile:default" />
+    <option name="activeProfile" value="profile:robson" />
     <option name="activeRegion" value="sa-east-1" />
     <option name="recentlyUsedProfiles">
       <list>
+        <option value="profile:robson" />
+        <option value="profile:localstack" />
         <option value="profile:default" />
       </list>
     </option>
@@ -13,5 +15,8 @@
         <option value="sa-east-1" />
       </list>
     </option>
+  </component>
+  <component name="explorerToolWindow">
+    <option name="selectedTab" value="Explorer" />
   </component>
 </project>
